@@ -1,0 +1,11 @@
+1. Substituir os arquivos do SrcML pelos arquivos da sua plataforma (coloque todos os arquivos do srcml do seu sistema operacional)
+	1.1 libsrcml.dylib
+	1.2 srcml
+	1.3 srcml.h
+	1.4 libsrcml.a
+	
+2. Modifique o caminho do SrcML na classe SrcML.java, modificando a String SRCML.
+	
+3. CLone os repositórios do arquivo projetos.txt
+
+4. Os padrões a serem buscados no código estão descritos no artigo padrões.pdf na pagina 5
