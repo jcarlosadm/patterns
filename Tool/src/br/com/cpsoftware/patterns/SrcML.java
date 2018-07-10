@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
 
 public class SrcML {
 
-	public static final String SRCML = "srcml ";
+	public static final String SRCML = "srcml/mac-os/srcml ";
 	
 	public static String rodarScrML(String arquivo) {
 		String output = "";

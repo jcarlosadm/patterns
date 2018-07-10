@@ -4,6 +4,8 @@
 	1.3 srcml.h
 	1.4 libsrcml.a
 	
+	-> Colocar o libsrcml.dylib em /usr/local/lib
+	
 2. Modifique o caminho do SrcML na classe SrcML.java, modificando a String SRCML.
 	
 3. CLone os repositórios do arquivo projetos.txt
