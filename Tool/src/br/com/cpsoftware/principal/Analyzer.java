@@ -9,6 +9,8 @@ import br.com.cpsoftware.patterns.SrcML;
 
 public class Analyzer {
 
+	public static String FOLDER_TO_ANALYZE = "code";
+	
 	public static void main(String[] args) {
 		
 		System.out.print("Project Name,");
@@ -28,10 +30,10 @@ public class Analyzer {
 
 		List<String> projetos = new ArrayList<>();
 
-		File[] directories = new File("code").listFiles();
+		File[] directories = new File(Analyzer.FOLDER_TO_ANALYZE).listFiles();
 		for (File f : directories) {
 			if (!f.getName().startsWith(".") && f.isDirectory()) {
-				projetos.add("code/" + f.getName());
+				projetos.add(Analyzer.FOLDER_TO_ANALYZE + "/" + f.getName());
 			}
 		}
 		
@@ -57,7 +59,6 @@ public class Analyzer {
 			for (File arquivo : arquivos) {
 				
 				String codigo = SrcML.rodarScrML(arquivo.getAbsolutePath());
-				System.out.println(codigo);
 				
 				PatternSearcher.searchForDanglingElse(codigo, arquivo.getAbsolutePath());
 				PatternSearcher.searchForAttributionsInConditions(codigo, arquivo.getAbsolutePath());
@@ -74,7 +75,7 @@ public class Analyzer {
 				
 			}
 			
-			System.out.print(projeto.replace("code/", "") + ",");
+			System.out.print(projeto.replace(Analyzer.FOLDER_TO_ANALYZE + "/", "") + ",");
 			
 			System.out.print(PatternSearcher.danglingElse + ",");
 			System.out.print(PatternSearcher.semAtribuicoesEmCondicoes + ",");

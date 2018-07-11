@@ -88,80 +88,22 @@ public class PatternSearcher {
 			for (int i = 0; i < listaDeNosExprStmt.getLength(); i++) {
 				NodeList listaDeNos = listaDeNosExprStmt.item(i).getChildNodes();
 	
-				boolean condition = true;
-				int cont = 0;
+				boolean condition = false;
 				for (int j = 0; j < listaDeNos.getLength(); j++) {
 					
-					/*if (listaDeNos.getLength() < 7 || listaDeNos.getLength() > 11 ) {
-						condition = false;
-						break;
-					}*/
-					
 					String no = listaDeNos.item(j).getNodeName();
-					//System.out.println(j+" "+no + ": " + listaDeNos.item(j).getTextContent());
 					
-					if (((j == 2 && no.equals("#text")) 
-						|| (j == 3 && no.equals("#text"))
-						|| (j == 4 && no.equals("#text"))
-						|| (j == 5 && no.equals("#text"))
-						|| (j == 6 && no.equals("#text"))
-						|| (j == 7 && no.equals("#text"))
-						|| (j == 8 && no.equals("#text"))
-						|| (j == 9 && no.equals("#text"))
-						) && listaDeNos.item(j).getTextContent().startsWith(" ")) {
-						continue;
-					} 
-					else if (((j == 2 && no.equals("#text")) 
-							|| (j == 3 && no.equals("#text"))
-							|| (j == 4 && no.equals("#text"))
-							|| (j == 5 && no.equals("#text"))
-							|| (j == 6 && no.equals("#text"))
-							|| (j == 7 && no.equals("#text"))
-							|| (j == 8 && no.equals("#text"))
-							|| (j == 9 && no.equals("#text"))
-							) && !listaDeNos.item(j).getTextContent().startsWith(" ")) {
-						condition = false;
-						break;
+					if (no.equals("operator") && listaDeNos.item(j).getTextContent().equals("=")){
+						if (listaDeNos.item(j).getParentNode().getNodeName().equals("expr")) {
+							if (listaDeNos.item(j).getParentNode().getParentNode().getNodeName().equals("condition")) {
+								condition = true;
+							}
+						}
 					}
-					
-					if (cont == 0 && !no.equals("operator") && 
-							!listaDeNos.item(j).getTextContent().startsWith("(")) {
-						condition = false;
-						break;
-					} 
-					if (cont == 1 && !no.equals("name")) {
-						condition = false;
-						break;
-					} 
-					if (cont == 2 && !no.equals("operator") || (cont == 2 
-							&& !listaDeNos.item(j).getTextContent().startsWith("="))) {
-						condition = false;
-						break;
-					} 
-					if (cont == 3 && !no.equals("call") && !no.equals("literal")) {
-						condition = false;
-						break;
-					} 
-					if(cont == 4 && !no.equals("operator") && 
-							!listaDeNos.item(j).getTextContent().startsWith(")")) {
-						condition = false;
-						break;
-					}
-					if(cont == 5 && !no.equals("operator") /*|| (cont == 5 && !listaDeNos.item(j).getTextContent().startsWith("=="))*/) {
-						condition = false;
-						break;
-					}
-					if(cont == 6 && !no.equals("name") 
-							&& (cont == 6 && !listaDeNos.item(j).getTextContent().startsWith("NULL") 
-							&& !listaDeNos.item(j).getTextContent().startsWith("null")) && !no.equals("literal")) {
-						condition = false;
-						break;
-					}
-					
-					cont++;
 				}
 				
 				if (!listaDeNosExprStmt.item(i).getTextContent().trim().equals("") && condition) {
+					//System.out.println(listaDeNosExprStmt.item(i).getParentNode().getNodeName());
 					//System.out.println(arquivo + " : Padrão - Atribuições em condições");
 					//System.out.println(listaDeNosExprStmt.item(i).getTextContent());
 					//System.out.println("--------------------------------------");
@@ -729,34 +671,23 @@ public class PatternSearcher {
 			for (int i = 0; i < listaDeNosExprStmt.getLength(); i++) {
 				NodeList listaDeNos = listaDeNosExprStmt.item(i).getChildNodes();
 				
-				boolean condition = true;
+				boolean condition = false;
+				
+				int nameIndex = -1;
 				
 				for (int j = 0; j < listaDeNos.getLength(); j++) {
 					
-					if (listaDeNos.getLength() != 6) {
-						condition = false;
-						break;
-					}
-					
 					String no = listaDeNos.item(j).getNodeName();
 					
-					if (j == 0 && !no.equals("name")) {
-						condition = false;
+					if (no.equals("name")) {
+						nameIndex = j;
 					}
-					if (j == 1 && !no.equals("#text")) {
-						condition = false;
-					}
-					if ((j == 2 && !no.equals("operator")) || (j == 2 && !listaDeNos.item(j).getTextContent().equals("="))) {
-						condition = false;
-					}
-					if (j == 3 && !no.equals("#text")) {
-						condition = false;
-					}
-					if (j == 4 && !no.equals("name")) {
-						condition = false;
-					}
-					if ((j == 5 && !no.equals("operator")) || (j == 5 && (!listaDeNos.item(j).getTextContent().equals("++") && !listaDeNos.item(j).getTextContent().equals("--")))) {
-						condition = false;
+					
+					if (no.equals("operator") && (listaDeNos.item(j).getTextContent().equals("++") || listaDeNos.item(j).getTextContent().equals("--"))) {
+						if ((nameIndex != -1) && j == (nameIndex + 1)) {
+							condition = true;
+							break;
+						}
 					}
 				}
 				
@@ -768,73 +699,7 @@ public class PatternSearcher {
 				}
 				
 				
-				condition = true;
 				
-				for (int j = 0; j < listaDeNos.getLength(); j++) {
-					
-					if (listaDeNos.getLength() != 7) {
-						condition = false;
-						break;
-					}
-					
-					String no = listaDeNos.item(j).getNodeName();
-					
-					if (j == 0 && !no.equals("name")) {
-						condition = false;
-					}
-					if (j == 1 && !no.equals("#text")) {
-						condition = false;
-					}
-					if ((j == 2 && !no.equals("operator")) || (j == 2 && !listaDeNos.item(j).getTextContent().equals("="))) {
-						condition = false;
-					}
-					if (j == 3 && !no.equals("#text")) {
-						condition = false;
-					}
-					if (j == 4 && !no.equals("operator")) {
-						condition = false;
-					}
-					if (j == 5 && !no.equals("name")) {
-						condition = false;
-					}
-					if ((j == 6 && !no.equals("operator")) || (j == 6 && (!listaDeNos.item(j).getTextContent().equals("++") && !listaDeNos.item(j).getTextContent().equals("--")))) {
-						condition = false;
-					}
-				}
-				
-				if (!listaDeNosExprStmt.item(i).getTextContent().trim().equals("") && condition) {
-					//System.out.println(arquivo + " : Padrão - Pós Incremento / Decremento");
-					//System.out.println(listaDeNosExprStmt.item(i).getTextContent());
-					//System.out.println("--------------------------------------");
-					posIncrementoDescremento++;
-				}
-				
-				condition = true;
-				
-				for (int j = 0; j < listaDeNos.getLength(); j++) {
-					
-					if (listaDeNos.getLength() != 2) {
-						condition = false;
-						break;
-					}
-					
-					String no = listaDeNos.item(j).getNodeName();
-					
-					if (j == 0 && !no.equals("name")) {
-						condition = false;
-					}
-				
-					if ((j == 1 && !no.equals("operator")) || (j == 6 && (!listaDeNos.item(j).getTextContent().equals("++") && !listaDeNos.item(j).getTextContent().equals("--")))) {
-						condition = false;
-					}
-				}
-				
-				if (!listaDeNosExprStmt.item(i).getTextContent().trim().equals("") && condition) {
-					//System.out.println(arquivo + " : Padrão - Pós Incremento / Decremento");
-					//System.out.println(listaDeNosExprStmt.item(i).getTextContent());
-					//System.out.println("--------------------------------------");
-					posIncrementoDescremento++;
-				}
 			}
 		}
 	}
@@ -855,34 +720,22 @@ public class PatternSearcher {
 			for (int i = 0; i < listaDeNosExprStmt.getLength(); i++) {
 				NodeList listaDeNos = listaDeNosExprStmt.item(i).getChildNodes();
 				
-				boolean condition = true;
+				boolean condition = false;
+				
+				int operatorIndex = -1;
 				
 				for (int j = 0; j < listaDeNos.getLength(); j++) {
 					
-					if (listaDeNos.getLength() != 6) {
-						condition = false;
-						break;
-					}
-					
 					String no = listaDeNos.item(j).getNodeName();
 					
-					if (j == 0 && !no.equals("name")) {
-						condition = false;
+					if (no.equals("operator") && (listaDeNos.item(j).getTextContent().equals("++") || listaDeNos.item(j).getTextContent().equals("--"))) {
+						operatorIndex = j;
 					}
-					if (j == 1 && !no.equals("#text")) {
-						condition = false;
-					}
-					if ((j == 2 && !no.equals("operator")) || (j == 2 && !listaDeNos.item(j).getTextContent().equals("="))) {
-						condition = false;
-					}
-					if (j == 3 && !no.equals("#text")) {
-						condition = false;
-					}
-					if ((j == 4 && !no.equals("operator")) || (j == 4 && (!listaDeNos.item(j).getTextContent().equals("++") && !listaDeNos.item(j).getTextContent().equals("--")))) {
-						condition = false;
-					}
-					if (j == 5 && !no.equals("name")) {
-						condition = false;
+					if (no.equals("name")) {
+						if ((operatorIndex != -1) && j == (operatorIndex + 1)) {
+							condition = true;
+							break;
+						}
 					}
 				}
 				
