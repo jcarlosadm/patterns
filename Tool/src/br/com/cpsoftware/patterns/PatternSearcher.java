@@ -330,7 +330,7 @@ public class PatternSearcher {
 					
 					if (listaDeNos.item(j).getTextContent().trim().equals("(")) {
 						if (listaDeNos.item(j).getParentNode().getParentNode().getTextContent().contains(",")){
-							System.out.println(listaDeNos.item(j).getParentNode().getParentNode().getTextContent());
+							//System.out.println(listaDeNos.item(j).getParentNode().getParentNode().getTextContent());
 							operadorVirgula++;
 						}
 					}

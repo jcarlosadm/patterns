@@ -9,7 +9,7 @@ import br.com.cpsoftware.patterns.SrcML;
 
 public class Analyzer {
 
-	public static String FOLDER_TO_ANALYZE = "code";
+	public static String FOLDER_TO_ANALYZE = "experiment";
 	
 	public static void main(String[] args) {
 		
