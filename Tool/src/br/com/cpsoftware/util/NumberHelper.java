@@ -30,7 +30,7 @@ public class NumberHelper {
 	
 	public static String formatDouble(double number){
 		
-		if (number == 0.0 || new Double(number).isNaN()){
+		if (number == 0.0 || Double.valueOf(number).isNaN()){
 			return "0,00";
 		}
 		

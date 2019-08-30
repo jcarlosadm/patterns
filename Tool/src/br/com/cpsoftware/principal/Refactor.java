@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.cpsoftware.patterns.PatternRefactor;
-import br.com.cpsoftware.patterns.PatternSearcher;
 import br.com.cpsoftware.patterns.SrcML;
 
 public class Refactor {
@@ -29,7 +28,7 @@ public static String FOLDER_TO_ANALYZE = "experiment";
 		
 		for (String projeto : projetos) {
 
-			PatternRefactor.semAtribuicoesEmCondicoes = 0;
+			PatternRefactor.attributionsInConditions = 0;
 			
 			File diretorio = new File(projeto);
 			ArrayList<File> arquivos = new ArrayList<>();
@@ -39,13 +38,15 @@ public static String FOLDER_TO_ANALYZE = "experiment";
 				
 				String codigo = SrcML.rodarScrML(arquivo.getAbsolutePath());
 				System.out.println(codigo);
-				PatternRefactor.refactorAttributionsInConditions(codigo, arquivo.getAbsolutePath());
+				//PatternRefactor.refactorAttributionsInConditions(codigo, arquivo.getAbsolutePath());
+				//PatternRefactor.refactorOperatorPrecedence(codigo, arquivo.getAbsolutePath());
+				PatternRefactor.refactorDanglingElse(codigo, arquivo.getAbsolutePath());
 				
 			}
 			
 			System.out.print(projeto.replace(Analyzer.FOLDER_TO_ANALYZE + "/", "") + ",");
 			
-			System.out.print(PatternSearcher.semAtribuicoesEmCondicoes + ",");
+			System.out.print(PatternRefactor.attributionsInConditions + ",");
 			
 		}
 	}
