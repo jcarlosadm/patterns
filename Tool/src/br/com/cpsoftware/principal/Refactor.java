@@ -38,9 +38,10 @@ public static String FOLDER_TO_ANALYZE = "experiment";
 				
 				String codigo = SrcML.rodarScrML(arquivo.getAbsolutePath());
 				System.out.println(codigo);
-				//PatternRefactor.refactorAttributionsInConditions(codigo, arquivo.getAbsolutePath());
+				PatternRefactor.refactorAttributionsInConditions(codigo, arquivo.getAbsolutePath());
 				//PatternRefactor.refactorOperatorPrecedence(codigo, arquivo.getAbsolutePath());
-				PatternRefactor.refactorDanglingElse(codigo, arquivo.getAbsolutePath());
+				//PatternRefactor.refactorDanglingElse(codigo, arquivo.getAbsolutePath());
+				//PatternRefactor.refactorLogicAsControlFlow(codigo, arquivo.getAbsolutePath());
 				
 			}
 			

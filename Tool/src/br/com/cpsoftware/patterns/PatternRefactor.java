@@ -113,8 +113,10 @@ public class PatternRefactor {
 							
 							for (Node n : nodesToAddBeforeIF) {
 								child.item(j).getParentNode().getParentNode().getParentNode().insertBefore(n, child.item(j).getParentNode().getParentNode());
+								if(n.getNodeName().equals("call")) {
+									break;
+								}
 							}
-							
 							
 							parent.removeChild(child.item(j));
 							
@@ -312,6 +314,126 @@ public class PatternRefactor {
 				}
 				
 			}
+			
+			
+		}
+		
+		
+		File f = new File(arquivo);
+		File newFile = new File(f.getAbsolutePath().replace(f.getName(), f.getName().replace(".c", ".xml")));
+		PrintWriter writer = new PrintWriter(newFile);
+		writer.write(SrcML.writeXmlDocumentToXmlFile(xml));
+		writer.close();
+		
+		String refactoredCode = SrcML.rodarScrML(newFile.getAbsolutePath());
+		File newRefactoredFile = new File(f.getAbsolutePath().replace(f.getName(), f.getName().replace(".c", "-refactored.c")));
+		
+		writer = new PrintWriter(newRefactoredFile);
+		writer.write(refactoredCode);
+		writer.close();
+		
+		String cmd = "/usr/local/bin/uncrustify -f " + newRefactoredFile.getAbsolutePath() +
+				" -o " + newRefactoredFile.getAbsolutePath() + " -c /Users/flavio/Desktop/Github/patterns/Tool/default.cfg"; 
+		
+		System.out.println(cmd);
+		
+		Runtime run  = Runtime.getRuntime(); 
+        Process process = run.exec(cmd);
+        
+		InputStream is = process.getInputStream();
+		InputStreamReader isr = new InputStreamReader(is);
+		BufferedReader br = new BufferedReader(isr);
+		String line;
+
+
+		while ((line = br.readLine()) != null) {
+		  System.out.println(line);
+		}
+		
+		
+	}
+	
+	public static void refactorLogicAsControlFlow(String codigo, String arquivo) throws IOException {
+		Document xml = SrcML.loadXMLFromString(codigo); 
+		if (xml != null) {
+			Element root = xml.getDocumentElement();
+			NodeList listaDeNosExprStmt = root.getElementsByTagName("expr_stmt");
+			
+			//List<Integer> indexes = new ArrayList<Integer>();
+			
+			for (int i = 0; i < listaDeNosExprStmt.getLength(); i++) {
+	
+				if (listaDeNosExprStmt.item(i).getTextContent().contains("&&") &&
+						countSubstrings(listaDeNosExprStmt.item(i).getTextContent(), "&&") == 1) {
+					
+					for (int j = 0; j < listaDeNosExprStmt.item(i).getChildNodes().getLength(); j++) {
+						Node n = listaDeNosExprStmt.item(i).getChildNodes().item(j);
+						
+						boolean closeBracket = false;
+						
+						if (n.getNodeName().equals("expr")) {
+							for (int k = 0; k < listaDeNosExprStmt.item(i).getChildNodes().item(j).getChildNodes().getLength(); k++) {
+								Node exprChild = listaDeNosExprStmt.item(i).getChildNodes().item(j).getChildNodes().item(k);
+								System.out.println(exprChild.getNodeName() + ": " + exprChild.getTextContent());
+								
+								if (k == 0 && exprChild.getNodeName().equals("name")) {
+									exprChild.setTextContent("if (" + exprChild.getTextContent() + ") {\r\n");
+								}
+								
+								if (exprChild.getNodeName().equals("call")) {
+									exprChild.setTextContent(exprChild.getTextContent() + ";");
+								}
+								
+								if (exprChild.getNodeName().equals("operator")) {
+									exprChild.setTextContent("");
+								}
+								
+								closeBracket = true;
+							}
+						}
+						
+						if (closeBracket) {
+							closeBracket = false;
+							n.setTextContent(n.getTextContent() + "\r\n}");
+						}
+						
+						n.getParentNode().setTextContent(n.getParentNode().getTextContent().replace("};", "}"));
+					}
+					
+				}
+				
+				//System.out.println(listaDeNosExprStmt.item(i).getNodeName() + ": " + listaDeNosExprStmt.item(i).getTextContent());
+				
+				/*if (listaDeNosExprStmt.item(i).getNodeName().equals("block")) {
+					if (!listaDeNosExprStmt.item(i).getTextContent().trim().startsWith("{")) {
+						indexes.add(i);
+					}
+				}*/
+				
+			}
+			
+			/*if (indexes.size() > 0) {
+				
+				for (Integer index : indexes) {
+					
+					//System.out.println("Index: " + index);
+					//System.out.println(listaDeNosExprStmt.item(index).getTextContent());
+					
+					listaDeNosExprStmt.item(index).setTextContent("{\r\n" + listaDeNosExprStmt.item(index).getTextContent() + "\r\n}");
+					
+					/*Node n = listaDeNosExprStmt.item(index).cloneNode(true);
+					n.setTextContent(" {\r\n");
+					listaDeNosExprStmt.item(index).getParentNode().insertBefore(n, listaDeNosExprStmt.item(index));				
+					
+					n = listaDeNosExprStmt.item(index).cloneNode(true);
+					n.setTextContent("\r\n} ");
+					listaDeNosExprStmt.item(index).getParentNode().appendChild(n);
+					
+					danglingElse++;
+					
+				}
+				
+			}*/
 			
 			
 		}
